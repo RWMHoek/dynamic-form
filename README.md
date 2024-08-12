@@ -1,36 +1,163 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# DynamicForm
 
-## Getting Started
+A TypeScript-based form management system designed to streamline form handling with validation, context management, and dynamic form array manipulation.
 
-First, run the development server:
+## Table of Contents
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Components](#components)
+  - [Custom Hooks](#custom-hooks)
+- [Folder Structure](#folder-structure)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Features
+
+- **Dynamic Form Arrays**: Easily add, insert, and remove items from form arrays.
+- **Validation**: Customizable validation rules for fields.
+- **Context Management**: Centralized form state and error handling through React Context.
+- **TypeScript Support**: Strong typing ensures better development experience and fewer runtime errors.
+
+## Installation
+
+1. **Clone the Repository**:
+    ```sh
+    git clone https://github.com/your-username/form-management-system.git
+    cd form-management-system
+    ```
+
+2. **Install Dependencies**:
+    ```sh
+    npm install
+    ```
+
+3. **Start the Development Server**:
+    ```sh
+    npm start
+    ```
+
+## Usage
+
+### Components
+
+#### `Field`
+
+A component for rendering form input fields with optional validation.
+
+**Props:**
+- `name` (string): The name of the field.
+- `validation` (ValidationRules): Validation rules for the field.
+- `blurHandler` (function): Function to handle field blur events.
+
+**Example:**
+```tsx
+<Field
+  name="email"
+  type="email"
+  validation={{
+    required: true,
+    minLength: 5,
+    maxLength: 50,
+    match: { format: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email address" }
+  }}
+/>
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+#### `FieldErrors`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+A component to display validation errors for a specific field.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+**Props:**
+- `fieldName` (string): The name of the field to display errors for.
 
-## Learn More
+**Example:**
+```tsx
+<FieldErrors fieldName="email" />
+```
 
-To learn more about Next.js, take a look at the following resources:
+#### `Form`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The main component to manage form state and handle form submission.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+**Props:**
+- `form` (object): Contains form state, dispatch function, submit handler, and error handling functions.
+- `children` (ReactNode): Form fields and components.
 
-## Deploy on Vercel
+**Example:**
+```tsx
+<Form
+  form={{
+    state,
+    dispatch,
+    submitHandler,
+    errors,
+    setErrors
+  }}
+>
+  <Field name="email" type="email" />
+  <FieldErrors fieldName="email" />
+  <button type="submit">Submit</button>
+</Form>
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+#### `FormArray`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+A component for handling arrays of form items, allowing dynamic addition, insertion, and removal of items.
+
+**Props:**
+- `name` (string): The name of the form array.
+- `children` (ReactNode): The form fields to be rendered within each array item.
+- `config` (object): Configuration for the array, including empty object template and optional legend.
+
+**Example:**
+```tsx
+<FormArray name="contacts" config={{ emptyObj: { phone: "" }, withInsert: true }}>
+  <Field name="phone" type="text" />
+</FormArray>
+```
+
+### Custom Hooks
+
+#### `useForm`
+
+A custom hook to manage form state and handle form submissions.
+
+**Usage:**
+```tsx
+import useForm from "@/hooks/useForm";
+
+const MyForm = () => {
+  const { state, dispatch, errors, setErrors, submitHandler } = useForm(initialData, handleSubmit);
+
+  return (
+    <Form form={{ state, dispatch, errors, setErrors, submitHandler }}>
+      <Field name="email" type="email" />
+      <FieldErrors fieldName="email" />
+      <button type="submit">Submit</button>
+    </Form>
+  );
+};
+```
+
+## Folder Structure
+
+- `components/`: Contains reusable React components like `Field`, `FieldErrors`, `Form`, and `FormArray`.
+- `contexts/`: React context providers and custom hooks.
+- `lib/`: Utility functions and types.
+- `reducer/`: Form reducer and related actions.
+- `hooks/`: Custom React hooks for form management.
+
+## Contributing
+
+Contributions are welcome! Please follow these steps to contribute:
+
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/YourFeature`).
+3. Make your changes.
+4. Commit your changes (`git commit -am 'Add new feature'`).
+5. Push to the branch (`git push origin feature/YourFeature`).
+6. Create a new Pull Request.
+
+Please ensure your code adheres to the existing style and is well-tested.
